@@ -1,4 +1,4 @@
-module github.com/damoon/raytracer
+module github.com/damoon/lab-raytracing
 
 go 1.17
 

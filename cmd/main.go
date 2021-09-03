@@ -7,7 +7,7 @@ import (
 	"os"
 	"runtime"
 
-	raytracer "github.com/damoon/raytracer/pkg"
+	raytracing "github.com/damoon/lab-raytracing"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 	"github.com/veandco/go-sdl2/sdl"
@@ -90,12 +90,12 @@ func circle(c *cli.Context) error {
 	file := c.String("output")
 	img := image.NewRGBA(image.Rect(0, 0, 2*r, 2*r))
 
-	err := raytracer.Circle(img)
+	err := raytracing.Circle(img)
 	if err != nil {
 		return err
 	}
 
-	err = raytracer.WritePNG(file, img)
+	err = raytracing.WritePNG(file, img)
 	if err != nil {
 		return err
 	}
@@ -116,13 +116,13 @@ func window(c *cli.Context) error {
 	}
 	defer w.Destroy()
 
-	s, err := raytracer.NewScene(r)
+	s, err := raytracing.NewScene(r)
 	if err != nil {
 		return fmt.Errorf("create scene: %v", err)
 	}
 
 	log.Print("create circle")
-	go raytracer.Circle(s.Img)
+	go raytracing.Circle(s.Img)
 	log.Print("create circle done")
 
 	events := make(chan sdl.Event)
