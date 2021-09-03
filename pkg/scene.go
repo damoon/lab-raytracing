@@ -44,7 +44,7 @@ func (s *Scene) Run(events <-chan sdl.Event, r *sdl.Renderer) <-chan error {
 	go func() {
 		defer close(errc)
 
-		ticker := time.NewTicker(40 * time.Millisecond)
+		ticker := time.NewTicker(time.Second / 30)
 
 		for {
 			select {
