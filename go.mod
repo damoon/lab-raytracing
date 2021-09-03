@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/joho/godotenv v1.3.0
 	github.com/urfave/cli/v2 v2.3.0
+	github.com/veandco/go-sdl2 v0.4.10
 )
 
 require (

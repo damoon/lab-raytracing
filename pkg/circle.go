@@ -3,34 +3,31 @@ package raytracer
 import (
 	"image"
 	"image/color"
-	"math"
 )
 
-func Circle(i *image.NRGBA) error {
-	width := i.Bounds().Max.X
-	r := width / 2
-	red := color.NRGBA{255, 0, 0, 255}
-	green := color.NRGBA{0, 255, 0, 255}
+func Circle(i *image.RGBA) error {
+	w := i.Bounds().Max.X
+	h := i.Bounds().Max.Y
+	// red := color.NRGBA{255, 0, 0, 255}
+	// green := color.NRGBA{0, 255, 0, 255}
 
-	for y := 0; y < width; y++ {
-		for x := 0; x < width; x++ {
-			c := red
-			if withInCircle(x, y, r) {
-				c = green
-			}
-
-			i.Set(x, y, c)
+	//for {
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			//time.Sleep(time.Nanosecond)
+			i.Set(x, y, color.NRGBA{uint8(y % 256), uint8(x % 256), uint8(y % 512), uint8(x % 256)})
 		}
 	}
 
+	// printed = false
+
+	// for y := 0; y < h; y++ {
+	// 	for x := 0; x < w; x++ {
+	// 		time.Sleep(time.Nanosecond)
+	// 		i.Set(x, y, color.NRGBA{uint8(y % 256), uint8(x % 256), 0, 255})
+	// 	}
+	// }
+	//}
+
 	return nil
-}
-
-func withInCircle(x, y, r int) bool {
-	x -= r
-	y -= r
-
-	d := math.Sqrt(float64(x*x + y*y))
-
-	return d < float64(r)
 }
