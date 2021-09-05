@@ -6,8 +6,11 @@ import (
 	"log"
 	"os"
 
-	raytracing "github.com/damoon/lab-raytracing"
+	"github.com/damoon/lab-raytracing/encode"
+	"github.com/damoon/lab-raytracing/raytracing"
+	"github.com/damoon/lab-raytracing/ui"
 	"github.com/joho/godotenv"
+	"github.com/pkg/profile"
 	"github.com/urfave/cli/v2"
 )
 
@@ -48,44 +51,55 @@ func loadEnv(envFile string) error {
 
 func app() *cli.App {
 	return &cli.App{
-		Name:  "app",
-		Usage: "a nice application",
+		Name:  "raytracing",
+		Usage: "a simple raytracer",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "output",
 				Aliases: []string{"o"},
 				Usage:   "file to output to",
-				EnvVars: []string{"APP_OUTPUT"},
+				EnvVars: []string{"RT_OUTPUT"},
 				Value:   "image.png",
 			},
+			&cli.BoolFlag{
+				Name:    "window",
+				Aliases: []string{"ui"},
+				Usage:   "open window",
+				EnvVars: []string{"RT_WINDOW"},
+				Value:   true,
+			},
+			&cli.BoolFlag{
+				Name:    "cpu-profile",
+				Usage:   "profile cpu usage",
+				EnvVars: []string{"RT_CPU_PROFILE"},
+				Value:   false,
+			},
+			&cli.IntFlag{
+				Name:    "radius",
+				Aliases: []string{"r"},
+				Usage:   "set the radius of the circle",
+				EnvVars: []string{"RT_CIRCLE_RADIUS"},
+				Value:   100,
+			},
 		},
-		Commands: []*cli.Command{
-			{
-				Name:  "circle",
-				Usage: "draw a circle",
-				Flags: []cli.Flag{
-					&cli.IntFlag{
-						Name:    "radius",
-						Aliases: []string{"r"},
-						Usage:   "set the radius of the circle",
-						EnvVars: []string{"APP_CIRCLE_RADIUS"},
-						Value:   100,
-					},
-				},
-				Action: circle,
-			},
-			{
-				Name:   "window",
-				Usage:  "open in a window",
-				Action: window,
-			},
+		Action: func(c *cli.Context) error {
+			if c.Bool("cpu-profile") {
+				defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+			}
+
+			openUI := c.Bool("window")
+			if openUI {
+				return ui.Window()
+			}
+
+			r := c.Int("radius")
+			path := c.String("output")
+			return directToFile(r, path)
 		},
 	}
 }
 
-func circle(c *cli.Context) error {
-	r := c.Int("radius")
-	file := c.String("output")
+func directToFile(r int, path string) error {
 	img := image.NewRGBA(image.Rect(0, 0, 2*r, 2*r))
 
 	err := raytracing.Circle(img)
@@ -93,7 +107,7 @@ func circle(c *cli.Context) error {
 		return err
 	}
 
-	err = raytracing.WritePNG(file, img)
+	err = encode.WritePNG(path, img)
 	if err != nil {
 		return err
 	}

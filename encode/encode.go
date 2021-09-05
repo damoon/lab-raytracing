@@ -1,20 +1,20 @@
-package raytracing
+package encode
 
 import (
 	"fmt"
 	"image"
-	"image/png"
+	"io"
 	"os"
 )
 
-func WritePNG(file string, img image.Image) error {
-	f, err := os.Create(file)
+func WriteImage(path string, img image.Image, enc func(w io.Writer, img image.Image) error) error {
+	f, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("open image destination: %v", err)
 	}
 	defer f.Close()
 
-	err = png.Encode(f, img)
+	err = enc(f, img)
 	if err != nil {
 		return fmt.Errorf("encode image: %v", err)
 	}

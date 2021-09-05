@@ -2,11 +2,10 @@ package encode
 
 import (
 	"image"
-	"io"
 
 	"github.com/lmittmann/ppm"
 )
 
-func PPM(w io.Writer, img image.Image) {
-	ppm.Encode(w, img)
+func WritePPM(path string, img image.Image) error {
+	return WriteImage(path, img, ppm.Encode)
 }
