@@ -7,3 +7,7 @@
 ``` bash
 go tool pprof -http=:8080 cpu.pprof
 ```
+
+``` bash
+go tool trace trace.out
+```

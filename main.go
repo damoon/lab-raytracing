@@ -68,11 +68,23 @@ func app() *cli.App {
 				EnvVars: []string{"RT_WINDOW"},
 				Value:   true,
 			},
-			&cli.StringFlag{
+			&cli.BoolFlag{
 				Name:    "cpu-profile",
+				Aliases: []string{"cpu"},
 				Usage:   "profile cpu usage",
 				EnvVars: []string{"RT_CPU_PROFILE"},
-				Value:   "",
+			},
+			&cli.BoolFlag{
+				Name:    "mem-profile",
+				Aliases: []string{"mem"},
+				Usage:   "profile memory usage",
+				EnvVars: []string{"RT_MEM_PROFILE"},
+			},
+			&cli.BoolFlag{
+				Name:    "trace-profile",
+				Aliases: []string{"trace"},
+				Usage:   "create a trace profile",
+				EnvVars: []string{"RT_TRACE_PROFILE"},
 			},
 			&cli.IntFlag{
 				Name:    "width",
@@ -90,9 +102,14 @@ func app() *cli.App {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			cpuProfile := c.String("cpu-profile")
-			if cpuProfile != "" {
-				defer profile.Start(profile.CPUProfile, profile.ProfilePath(cpuProfile)).Stop()
+			if c.Bool("cpu-profile") {
+				defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+			}
+			if c.Bool("mem-profile") {
+				defer profile.Start(profile.MemProfile, profile.MemProfileRate(1), profile.ProfilePath(".")).Stop()
+			}
+			if c.Bool("trace-profile") {
+				defer profile.Start(profile.TraceProfile, profile.ProfilePath(".")).Stop()
 			}
 
 			w := c.Int("width")
