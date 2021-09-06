@@ -5,15 +5,24 @@ import (
 	"image/color"
 )
 
-func Circle(i *image.RGBA) error {
-	w := i.Bounds().Max.X
-	h := i.Bounds().Max.Y
+type Raytracer struct {
+	Callback func()
+	Image    *image.RGBA
+}
+
+func NewRaytracer() *Raytracer {
+	return &Raytracer{}
+}
+
+func (r *Raytracer) Run() {
+	w := r.Image.Bounds().Max.X
+	h := r.Image.Bounds().Max.Y
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
-			i.Set(x, y, color.NRGBA{uint8(y % 256), uint8(x % 256), uint8(y % 512), uint8(x % 256)})
+			r.Image.Set(x, y, color.NRGBA{uint8(y % 256), uint8(x % 256), uint8(y % 512), uint8(x % 256)})
 		}
 	}
 
-	return nil
+	r.Callback()
 }

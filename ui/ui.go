@@ -3,7 +3,8 @@ package ui
 import (
 	"fmt"
 	"image"
-	"log"
+	"image/color"
+	"image/draw"
 
 	"github.com/damoon/lab-raytracing/raytracing"
 	"github.com/oakmound/oak/v3/shiny/driver"
@@ -14,33 +15,37 @@ import (
 	"golang.org/x/mobile/event/size"
 )
 
-func Window() error {
-	var err error
+func Window(w, h int) error {
+	var returnErr error
+	var changed bool
+	var sz size.Event
 
 	driver.Main(func(s screen.Screen) {
 		w, err := s.NewWindow(screen.WindowGenerator{
 			Title:  "Example",
-			Width:  1280,
-			Height: 720,
+			Width:  w,
+			Height: h,
 		})
 		if err != nil {
-			log.Fatal(err)
+			returnErr = err
+			return
 		}
 		defer w.Release()
 
-		size0 := image.Point{1280, 720}
-		b, err := s.NewImage(size0)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer b.Release()
+		repaint := func() { w.Send(paint.Event{}) }
 
-		err = raytracing.Circle(b.RGBA())
+		img, err := s.NewImage(sz.Size())
 		if err != nil {
-			log.Fatal(err)
+			returnErr = err
+			return
 		}
 
-		// var sz size.Event
+		raytracer := raytracing.Raytracer{
+			Callback: repaint,
+			Image:    img.RGBA(),
+		}
+		go raytracer.Run()
+
 		for {
 			e := w.NextEvent()
 
@@ -59,35 +64,47 @@ func Window() error {
 					return
 				}
 
+				if changed {
+					repaint := func() { w.Send(paint.Event{}) }
+
+					img, err = s.NewImage(sz.Size())
+					if err != nil {
+						returnErr = err
+						return
+					}
+
+					raytracer = raytracing.Raytracer{
+						Callback: repaint,
+						Image:    img.RGBA(),
+					}
+					go raytracer.Run()
+
+					changed = false
+				}
+
 			case key.Event:
 				if e.Code == key.CodeEscape {
 					return
 				}
 
 			case paint.Event:
-				w.Upload(image.Point{0, 0}, b, b.Bounds())
+				if sz.Size().X != img.Size().X || sz.Size().Y != img.Size().Y {
+					w.Fill(sz.Bounds(), color.Black, draw.Src)
+				}
+
+				w.Upload(image.Point{0, 0}, img, img.Bounds())
 				w.Publish()
 
 			case size.Event:
-				b, err = s.NewImage(e.Size())
-				if err != nil {
-					log.Fatal(err)
-				}
-				defer b.Release()
-
-				err = raytracing.Circle(b.RGBA())
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				w.Upload(image.Point{0, 0}, b, b.Bounds())
-				w.Publish()
+				sz = e
+				changed = true
 
 			case error:
-				log.Print(e)
+				returnErr = err
+				return
 			}
 		}
 	})
 
-	return err
+	return returnErr
 }

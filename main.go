@@ -68,46 +68,64 @@ func app() *cli.App {
 				EnvVars: []string{"RT_WINDOW"},
 				Value:   true,
 			},
-			&cli.BoolFlag{
+			&cli.StringFlag{
 				Name:    "cpu-profile",
 				Usage:   "profile cpu usage",
 				EnvVars: []string{"RT_CPU_PROFILE"},
-				Value:   false,
+				Value:   "",
 			},
 			&cli.IntFlag{
-				Name:    "radius",
-				Aliases: []string{"r"},
-				Usage:   "set the radius of the circle",
-				EnvVars: []string{"RT_CIRCLE_RADIUS"},
-				Value:   100,
+				Name:    "width",
+				Aliases: []string{"w"},
+				Usage:   "pixel width of the image",
+				EnvVars: []string{"RT_IMAGE_WIDTH"},
+				Value:   1280,
+			},
+			&cli.IntFlag{
+				Name: "height",
+				// Aliases: []string{"h"},
+				Usage:   "pixel height of the image",
+				EnvVars: []string{"RT_IMAGE_HEIGHT"},
+				Value:   720,
 			},
 		},
 		Action: func(c *cli.Context) error {
-			if c.Bool("cpu-profile") {
-				defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+			cpuProfile := c.String("cpu-profile")
+			if cpuProfile != "" {
+				defer profile.Start(profile.CPUProfile, profile.ProfilePath(cpuProfile)).Stop()
 			}
+
+			w := c.Int("width")
+			h := c.Int("height")
 
 			openUI := c.Bool("window")
 			if openUI {
-				return ui.Window()
+				return ui.Window(w, h)
 			}
 
-			r := c.Int("radius")
 			path := c.String("output")
-			return directToFile(r, path)
+			return directToFile(w, h, path)
 		},
 	}
 }
 
-func directToFile(r int, path string) error {
-	img := image.NewRGBA(image.Rect(0, 0, 2*r, 2*r))
+func directToFile(w, h int, path string) error {
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
 
-	err := raytracing.Circle(img)
-	if err != nil {
-		return err
+	ch := make(chan interface{})
+	done := func() {
+		ch <- struct{}{}
 	}
 
-	err = encode.WritePNG(path, img)
+	raytracer := raytracing.Raytracer{
+		Callback: done,
+		Image:    img,
+	}
+	go raytracer.Run()
+
+	<-ch
+
+	err := encode.WritePNG(path, img)
 	if err != nil {
 		return err
 	}
