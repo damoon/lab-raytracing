@@ -8,8 +8,7 @@ require (
 	github.com/oakmound/oak/v3 v3.0.0-cursorPosition
 	github.com/pkg/profile v1.6.0
 	github.com/urfave/cli/v2 v2.3.0
-	github.com/veandco/go-sdl2 v0.4.10
-	golang.org/x/mobile v0.0.0-20210902104108-5d9a33257ab5
+	golang.org/x/mobile v0.0.0-20210917185523-6d8ad35e4603
 )
 
 require (
