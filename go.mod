@@ -3,7 +3,7 @@ module github.com/damoon/lab-raytracing
 go 1.17
 
 require (
-	github.com/joho/godotenv v1.3.0
+	github.com/joho/godotenv v1.4.0
 	github.com/lmittmann/ppm v1.0.0
 	github.com/oakmound/oak/v3 v3.0.0
 	github.com/pkg/profile v1.6.0
