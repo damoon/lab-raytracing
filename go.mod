@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/joho/godotenv v1.4.0
 	github.com/lmittmann/ppm v1.0.0
-	github.com/oakmound/oak/v3 v3.0.1
+	github.com/oakmound/oak/v3 v3.1.0
 	github.com/pkg/profile v1.6.0
 	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/mobile v0.0.0-20210924032853-1c027f395ef7
