@@ -8,7 +8,7 @@ require (
 	github.com/oakmound/oak/v3 v3.1.0
 	github.com/pkg/profile v1.6.0
 	github.com/urfave/cli/v2 v2.3.0
-	golang.org/x/mobile v0.0.0-20211109191125-d61a72f26a1a
+	golang.org/x/mobile v0.0.0-20211206114535-1ab90197b3d2
 )
 
 require (
