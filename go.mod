@@ -8,7 +8,7 @@ require (
 	github.com/oakmound/oak/v3 v3.4.0
 	github.com/pkg/profile v1.6.0
 	github.com/urfave/cli/v2 v2.20.2
-	golang.org/x/mobile v0.0.0-20221012134814-c746ac228303
+	golang.org/x/mobile v0.0.0-20221018190223-51f526d719ab
 )
 
 require (
@@ -21,5 +21,5 @@ require (
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 )
