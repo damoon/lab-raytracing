@@ -7,7 +7,7 @@ require (
 	github.com/lmittmann/ppm v1.0.1
 	github.com/oakmound/oak/v3 v3.4.0
 	github.com/pkg/profile v1.7.0
-	github.com/urfave/cli/v2 v2.24.1
+	github.com/urfave/cli/v2 v2.24.2
 	golang.org/x/mobile v0.0.0-20221110043201-43a038452099
 )
 
