@@ -11,7 +11,7 @@ import (
 	"github.com/damoon/lab-raytracing/ui"
 	"github.com/joho/godotenv"
 	"github.com/pkg/profile"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 func main() {
